@@ -4,13 +4,14 @@ const Top = ({totalInc, totalExp}) => {
        
         let budget = 0;
         if (totalInc > totalExp) {
-            budget = `+ ${totalInc - totalExp}`
+            budget = `+ ${totalInc - (totalExp)}`
         }
 
+      
         let percentage;
-        if (totalInc === 0) {
+        if (totalInc === 0 || totalExp > totalInc) {
             percentage = `0%`
-        } else {
+         } else {
             percentage = `${Math.round((totalExp / totalInc) * 100)} %`;
         }
         

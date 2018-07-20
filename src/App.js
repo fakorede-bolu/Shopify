@@ -57,7 +57,7 @@ class App extends Component {
       })
       this.setState({ type: "inc", description: "", value: "" })
 
-      // console.log(this.state.exp);
+      console.log(this.state.budgetList.exp);
     }
    
   }
@@ -65,7 +65,8 @@ class App extends Component {
   
   onSubmit = () => {
     this.AddItem();
-    this.totals()
+    this.Inctotals();
+    this.Exptotals()
   }
 
   keyPress = (event) => {
@@ -77,42 +78,40 @@ class App extends Component {
   }
   
 
-  totals = () => {
+  Inctotals = () => {
     let sum = 0;
-    if (this.state.type === 'inc') {
+    
      this.state.budgetList.inc.map((increase) => {
         return (sum += increase.Value)
       })
       this.setState({inc: sum})
-    } else if (this.state.type === 'exp') {
-     this.state.budgetList.exp.map((expense) => {
-        return (sum += expense.Value)
-      })
-      this.setState({exp: sum})
-    }
-  }
+    } 
 
-  // TopBudgetCalc = () => {
-  //   let budget = 0;
-  //   if (this.state.inc > this.state.exp) {
-  //     budget = `+ ${this.state.inc - totalExp}`
-  //   }
-  // }  
-  //   let percentage;
-  //   if (this.state.inc === 0) {
-  //     percentage = `0%`
-  //   } else {
-  //     percentage = `${Math.round((totalExp / this.state.inc) * 100)} %`;
-  //   }
-  // }
-  DelItem = (type, id) => {
-    const ids = this.state.budgetList[type].map((item) => {
+  Exptotals = () => {
+    let sum = 0;
+      this.state.budgetList.exp.map((increase) => {
+        return (sum += increase.Value)
+      })
+    this.setState({ exp: sum })
+    }
+     
+
+  DelIncItem = (id) => {
+    const ids = this.state.budgetList.inc.map((item) => {
       return item.Id
     })
     const index = ids.indexOf(id);
-    this.state.budgetList[type].splice(index, 1)
-    this.totals();
-    this.setState({ type: "inc", description: "", value: "" })
+    this.state.budgetList.inc.splice(index, 1)
+    this.Inctotals();
+  }
+
+  DelExpItem = (id) => {
+    const ids = this.state.budgetList.exp.map((item) => {
+      return item.Id
+    })
+    const index = ids.indexOf(id);
+    this.state.budgetList.exp.splice(index, 1)
+    this.Exptotals();
   }
   
   render() {
@@ -120,7 +119,7 @@ class App extends Component {
       <div className="App">
         <Top totalInc={this.state.inc} totalExp={this.state.exp} budget={this.state.budget} percent = {this.state.percentage}/>
         <Input value = {this.state.value} type = {this.state.type} description = {this.state.description} typeChange = {this.typeChange} desChange = {this.desChange} valChange = {this.valChange} onSubmit = {this.onSubmit} onKeyPress = {this.keyPress}/>
-        <Item Income={this.state.budgetList.inc} Expense={this.state.budgetList.exp} DeleteItem = {this.DelItem}/>
+        <Item Income={this.state.budgetList.inc} Expense={this.state.budgetList.exp} DelIncItem = {this.DelIncItem} DelExpItem={this.DelExpItem}/>
       </div>
     );
   }
