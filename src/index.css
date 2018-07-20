@@ -277,3 +277,8 @@ h2 {
 .unpaid:hover .item__description { font-weight: 900; }
 
 
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}

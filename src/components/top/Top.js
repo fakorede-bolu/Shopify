@@ -34,7 +34,7 @@ const Top = ({totalInc, totalExp}) => {
                         <div className="budget__expenses clearfix">
                             <div className="budget__expenses--text">Expenses</div>
                             <div className="right clearfix">
-                                <div className="budget__expenses--value">-{ totalExp}</div>
+                                <div className="budget__expenses--value">-{ totalExp }</div>
                                 <div className="budget__expenses--percentage">{percentage}</div>
                             </div>
                         </div>
