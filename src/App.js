@@ -16,7 +16,8 @@ class App extends Component {
       description: '',
       value: '',
       inc: 0,
-      exp: 0
+      exp: 0,
+      indVal: 0
   
     }
   }
@@ -49,11 +50,13 @@ class App extends Component {
       console.log(this.state.budgetList.inc);
    
     } else if (this.state.type === 'exp') {
+
       this.state.budgetList.exp.push({
         Id: (this.state.budgetList.exp.length-1) + 1,
         Type: this.state.type,
         Description: this.state.description,
-        Value: this.state.value
+        Value: this.state.value,
+        Percentage: Math.round((this.state.value/ this.state.inc) * 100)
       })
       this.setState({ type: "inc", description: "", value: "" })
 
@@ -62,11 +65,10 @@ class App extends Component {
    
   }
 
-  
   onSubmit = () => {
     this.AddItem();
     this.Inctotals();
-    this.Exptotals()
+    this.Exptotals();
   }
 
   keyPress = (event) => {
@@ -117,9 +119,9 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Top totalInc={this.state.inc} totalExp={this.state.exp} budget={this.state.budget} percent = {this.state.percentage}/>
+        <Top totalInc={this.state.inc} totalExp={this.state.exp} budget={this.state.budget} percent = {this.state.percentage} />
         <Input value = {this.state.value} type = {this.state.type} description = {this.state.description} typeChange = {this.typeChange} desChange = {this.desChange} valChange = {this.valChange} onSubmit = {this.onSubmit} onKeyPress = {this.keyPress}/>
-        <Item Income={this.state.budgetList.inc} Expense={this.state.budgetList.exp} DelIncItem = {this.DelIncItem} DelExpItem={this.DelExpItem}/>
+        <Item Income={this.state.budgetList.inc} Expense={this.state.budgetList.exp} DelIncItem={() => this.DelIncItem} DelExpItem={() => this.DelExpItem}/>
       </div>
     );
   }

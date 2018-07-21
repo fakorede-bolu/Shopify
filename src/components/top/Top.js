@@ -2,19 +2,27 @@ import React from "react";
 
 const Top = ({totalInc, totalExp}) => {
        
-        let budget = 0;
+        let budget = `0.00`;
         if (totalInc > totalExp) {
             budget = `+ ${totalInc - (totalExp)}`
+        } else if (totalExp > totalInc) {
+            budget = `- ${totalExp}`
         }
 
+        
       
         let percentage;
         if (totalInc === 0 || totalExp > totalInc) {
             percentage = `0%`
-         } else {
+         } else if (totalInc > totalExp) {
             percentage = `${Math.round((totalExp / totalInc) * 100)} %`;
         }
         
+       
+
+
+
+
         return (
             <div>
                 <div className="top">
