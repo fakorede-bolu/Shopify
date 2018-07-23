@@ -4,13 +4,26 @@ const Top = ({totalInc, totalExp}) => {
        
         let budget = `0.00`;
         if (totalInc > totalExp) {
-            budget = `+ ${totalInc - (totalExp)}`
+            budget = `+${totalInc - (totalExp)}`
         } else if (totalExp > totalInc) {
-            budget = `- ${totalExp}`
+            budget = `-${totalExp}`
         }
 
-        
       
+        let TotalInc;
+        if (totalInc === 0) {
+            TotalInc = `0.00`
+        } else {
+            TotalInc = totalInc
+        }
+
+        let TotalExp;
+        if (totalExp === 0) {
+            TotalExp = `0.00`
+        } else {
+            TotalExp = totalExp
+        }
+
         let percentage;
         if (totalInc === 0 || totalExp > totalInc) {
             percentage = `0%`
@@ -20,15 +33,19 @@ const Top = ({totalInc, totalExp}) => {
         
        
 
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        
+        // const day = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
-
-
+        
         return (
             <div>
                 <div className="top">
                     <div className="budget">
                         <div className="budget__title">
-                            Available Budget in <span className="budget__title--month">%Month%</span>:
+                            Available Budget in <span className="budget__title--month">{month}, {year}</span>:
                         </div>
 
                         <div className="budget__value"> {budget} </div>
@@ -36,14 +53,14 @@ const Top = ({totalInc, totalExp}) => {
                         <div className="budget__income clearfix">
                             <div className="budget__income--text">Income</div>
                             <div className="right">
-                                <div className="budget__income--value">+{ totalInc } </div>
+                                <div className="budget__income--value">+{ TotalInc } </div>
                                 <div className="budget__income--percentage">&nbsp;</div>
                             </div>
                         </div>
                         <div className="budget__expenses clearfix">
                             <div className="budget__expenses--text">Expenses</div>
                             <div className="right clearfix">
-                                <div className="budget__expenses--value">-{ totalExp }</div>
+                                <div className="budget__expenses--value">-{ TotalExp }</div>
                                 <div className="budget__expenses--percentage">{percentage}</div>
                             </div>
                         </div>

@@ -5,41 +5,34 @@ class Item extends Component {
     render() {
 
        const IncItem = this.props.Income.map((value, index) => {
-           if (value.Type === 'inc' && value.Description !== '' && value.Value !== '') {
-                return (
-                    <div className="income__list" key={index}>
-                        <div className="item clearfix" id="income-0"><div className="item__description">{value.Description}</div>
-                            <div className="right clearfix">
-                                <div className="item__value" >+ {value.Value}</div>
-                                <div className="item__delete">
-                                    <button className="item__delete--btn" onClick={this.props.DelIncItem(index)}><i className="ion-ios-close-outline"></i>Del</button>
-                                </div>
+            return (
+                <div className="income__list" key={index}>
+                    <div className="item clearfix" id="income-0"><div className="item__description">{value.Description}</div>
+                        <div className="right clearfix">
+                            <div className="item__value" >+{value.Value}</div>
+                            <div className="item__delete">
+                                <button className="item__delete--btn" onClick={() => this.props.DelIncItem(value.Id)}><i className="ion-ios-close-outline"></i>Del</button>
                             </div>
                         </div>
-                    </div> 
-   
-            )} else {
-                return value;
-            }
-       })
-        const ExpItem = this.props.Expense.map((value, index) => {
-            if (value.Type === 'exp' && value.Description !== '' && value.Value !== '') {
-                return (
-                    <div className="expenses__list" key={index}>
-                        <div className="item clearfix" id="expense-0">
-                            <div className="item__description">{value.Description}</div>
-                            <div className="right clearfix">
-                                <div className="item__value" >- {value.Value}</div>
-                                <div className="item__percentage">{value.Percentage}%</div>
-                                <div className="item__delete">
-                                    <button className="item__delete--btn" onClick={ this.props.DelExpItem( index)}><i className="ion-ios-close-outline"></i>del</button>
-                                </div>
-                            </div>
-                        </div>        
                     </div>
-                )} else {
-                return value;
-                }
+                </div> 
+            )
+        })
+        const ExpItem = this.props.Expense.map((value, index) => {
+            return (
+                <div className="expenses__list" key={index}>
+                    <div className="item clearfix" id="expense-0">
+                        <div className="item__description">{value.Description}</div>
+                        <div className="right clearfix">
+                            <div className="item__value" >- {value.Value}</div>
+                            <div className="item__percentage">{value.Percentage}%</div>
+                            <div className="item__delete">
+                                <button className="item__delete--btn" onClick={() => this.props.DelExpItem(value.Id)}><i className="ion-ios-close-outline"></i>del</button>
+                            </div>
+                        </div>
+                    </div>        
+                </div>
+            )
         })
 
         return (

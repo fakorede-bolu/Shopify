@@ -16,9 +16,7 @@ class App extends Component {
       description: '',
       value: '',
       inc: 0,
-      exp: 0,
-      indVal: 0
-  
+      exp: 0
     }
   }
 
@@ -40,23 +38,29 @@ class App extends Component {
 
     if (this.state.type === 'inc') {
       this.state.budgetList.inc.push({
-        Id:  (this.state.budgetList.inc.length - 1) + 1,
+        Id:  (this.state.budgetList.inc.length - 1) + 1, // 6 -1
         Type: this.state.type,
         Description: this.state.description,
         Value: this.state.value
       })
       this.setState({ type: "inc", description: "", value: "" })
-
       console.log(this.state.budgetList.inc);
+     
    
     } else if (this.state.type === 'exp') {
+      let percentage;
 
+      if (this.state.inc === 0) {
+        percentage = 0
+      } else {
+        percentage = Math.round((this.state.value / this.state.inc) * 100)
+      }
       this.state.budgetList.exp.push({
         Id: (this.state.budgetList.exp.length-1) + 1,
         Type: this.state.type,
         Description: this.state.description,
         Value: this.state.value,
-        Percentage: Math.round((this.state.value/ this.state.inc) * 100)
+        Percentage: percentage
       })
       this.setState({ type: "inc", description: "", value: "" })
 
@@ -66,37 +70,38 @@ class App extends Component {
   }
 
   onSubmit = () => {
-    this.AddItem();
-    this.Inctotals();
-    this.Exptotals();
+    if ( this.state.description !== '' && this.state.value !== '' ) {
+      this.AddItem();
+      this.Inctotals();
+      this.Exptotals();
+    } 
+    
   }
 
   keyPress = (event) => {
     if (event.keyCode === 13) {
       // console.log('value', event.target.value);
       this.AddItem();
-      this.totals()
     }
   }
   
 
   Inctotals = () => {
     let sum = 0;
-    
-     this.state.budgetList.inc.map((increase) => {
-        return (sum += increase.Value)
-      })
-      this.setState({inc: sum})
-    } 
-
+      this.state.budgetList.inc.map((increase) => {
+          return (sum += increase.Value)
+        })
+      this.setState({inc: sum}) 
+      
+  }
   Exptotals = () => {
-    let sum = 0;
-      this.state.budgetList.exp.map((increase) => {
-        return (sum += increase.Value)
-      })
-    this.setState({ exp: sum })
-    }
-     
+      let sum = 0;
+        this.state.budgetList.exp.map((increase) => {
+          return (sum += increase.Value)
+        })
+      this.setState({ exp: sum })
+   
+  } 
 
   DelIncItem = (id) => {
     const ids = this.state.budgetList.inc.map((item) => {
@@ -115,13 +120,13 @@ class App extends Component {
     this.state.budgetList.exp.splice(index, 1)
     this.Exptotals();
   }
-  
+
   render() {
     return (
       <div className="App">
-        <Top totalInc={this.state.inc} totalExp={this.state.exp} budget={this.state.budget} percent = {this.state.percentage} />
-        <Input value = {this.state.value} type = {this.state.type} description = {this.state.description} typeChange = {this.typeChange} desChange = {this.desChange} valChange = {this.valChange} onSubmit = {this.onSubmit} onKeyPress = {this.keyPress}/>
-        <Item Income={this.state.budgetList.inc} Expense={this.state.budgetList.exp} DelIncItem={() => this.DelIncItem} DelExpItem={() => this.DelExpItem}/>
+        <Top totalInc = {this.state.inc} totalExp = {this.state.exp} budget = {this.state.budget} percent = {this.state.percentage} />
+        <Input value = {this.state.value} type = {this.state.type} description = {this.state.description} typeChange = {this.typeChange} desChange = {this.desChange} valChange = {this.valChange} onSubmit = {this.onSubmit} onKeyPress = {() => this.keyPress}/>
+        <Item Income = {this.state.budgetList.inc} Expense = {this.state.budgetList.exp} DelIncItem = { this.DelIncItem} DelExpItem = { this.DelExpItem}/>
       </div>
     );
   }
