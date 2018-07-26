@@ -34,20 +34,38 @@ class App extends Component {
     this.setState({ value: parseFloat(e.target.value) })
   }
 
-  AddItem = () => {
-
-    if (this.state.type === 'inc') {
-      this.state.budgetList.inc.push({
-        Id:  (this.state.budgetList.inc.length - 1) + 1, // 6 -1
-        Type: this.state.type,
-        Description: this.state.description,
-        Value: this.state.value
+  componentDidMount() {
+    fetch('http://localhost:8080/')
+    .then(response => response.json())
+    .then(console.log)
+  }
+  AddIncItem = () => {
+    fetch('http://localhost:8080/incitem', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: (this.state.budgetList.inc.length - 1) + 1,
+        type: this.state.type,
+        description: this.state.description,
+        value: this.state.value
       })
-      this.setState({ type: "inc", description: "", value: "" })
+    }).then(response => response.json())
+      .then(item => {
+        console.log(item);
+        this.state.budgetList.inc.push({
+          Id: item.Id, // 6 -1
+          Type: item.Type,
+          Description: item.Description,
+          Value: item.Value
+        })
+      })
+      
       console.log(this.state.budgetList.inc);
-     
    
-    } else if (this.state.type === 'exp') {
+  }
+   
+
+  AddExpItem = () => {
       let percentage;
 
       if (this.state.inc === 0) {
@@ -55,28 +73,44 @@ class App extends Component {
       } else {
         percentage = Math.round((this.state.value / this.state.inc) * 100)
       }
-      this.state.budgetList.exp.push({
-        Id: (this.state.budgetList.exp.length-1) + 1,
-        Type: this.state.type,
-        Description: this.state.description,
-        Value: this.state.value,
-        Percentage: percentage
+      
+    fetch('http://localhost:8080/expitem', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: (this.state.budgetList.exp.length - 1) + 1,
+        type: this.state.type,
+        description: this.state.description,
+        value: this.state.value,
+        percentage: percentage
+      })
+    }).then(response => response.json())
+      .then(item => {
+        console.log(item);
+        this.state.budgetList.exp.push({
+          Id: item.Id, // 6 -1
+          Type: item.Type,
+          Description: item.Description,
+          Value: item.Value,
+          Percentage: item.Percentage
+        })
       })
       this.setState({ type: "inc", description: "", value: "" })
 
       console.log(this.state.budgetList.exp);
-    }
-   
   }
-
   onSubmit = () => {
-    if ( this.state.description !== '' && this.state.value !== '' ) {
-      this.AddItem();
+    if (this.state.description !== '' && this.state.value !== '') {
+      if (this.state.type === 'inc') {
+        this.AddIncItem()
+      } else {
+        this.AddExpItem()
+      }
       this.Inctotals();
       this.Exptotals();
-    } 
-    
-  }
+      this.setState({ type: "inc", description: "", value: "" })
+    }
+  }  
 
   keyPress = (event) => {
     if (event.keyCode === 13) {
@@ -87,39 +121,78 @@ class App extends Component {
   
 
   Inctotals = () => {
-    let sum = 0;
-      this.state.budgetList.inc.map((increase) => {
-          return (sum += increase.Value)
-        })
-      this.setState({inc: sum}) 
-      
+    // let sum = 0;
+    fetch('http://localhost:8080/income', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: this.state.type,
+        description: this.state.description,
+        value: this.state.value
+      })
+    }).then(response => response.json())
+    .then(totals => {
+      console.log(totals);
+      this.setState({inc: totals})})
   }
   Exptotals = () => {
-      let sum = 0;
-        this.state.budgetList.exp.map((increase) => {
-          return (sum += increase.Value)
-        })
-      this.setState({ exp: sum })
-   
-  } 
+    fetch('http://localhost:8080/expense', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: this.state.type,
+        description: this.state.description,
+        value: this.state.value
+      })
+    }).then(response => response.json())
+      .then(totals => {
+        console.log(totals);
+        this.setState({ exp: totals })
+      })
+  }
+
 
   DelIncItem = (id) => {
     const ids = this.state.budgetList.inc.map((item) => {
-      return item.Id
+      return (item.Id, item.Value)
     })
     const index = ids.indexOf(id);
+    fetch('http://localhost:8080/incdelete', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: index
+      })
+    }).then(response => response.json())
+      .then(value => this.setState({ inc: value }))
     this.state.budgetList.inc.splice(index, 1)
     this.Inctotals();
   }
 
   DelExpItem = (id) => {
     const ids = this.state.budgetList.exp.map((item) => {
-      return item.Id
+      return (item.Id)
     })
     const index = ids.indexOf(id);
+    fetch('http://localhost:8080/expdelete', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: index
+      })
+    }).then(response => response.json())
+      .then(value => this.setState({exp: value }))
     this.state.budgetList.exp.splice(index, 1)
     this.Exptotals();
   }
+  
+        //   const ids = this.state.budgetList.exp.map((item) => {
+        //     return item.Id
+        //   })
+        //   const index = ids.indexOf(id);
+        //   this.state.budgetList.exp.splice(index, 1)
+        //   this.Exptotals();
+        //}
 
   render() {
     return (
