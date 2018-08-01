@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
+import Register from './components/Register/Register';
+import Signin from './components/signin/signin';
 import Top from './components/top/Top';
 import Input from './components/input/Input';
 import Item from './components/item/Item';
@@ -8,19 +10,47 @@ class App extends Component {
   constructor() {
     super()
     this.state = {
-      budgetList: {
-        inc: [],
-        exp: []
-      },
+      
       type: 'inc',
       description: '',
       value: '',
-      inc: 0,
-      exp: 0
+      route: 'SignIn',
+      user: {
+        userid: '',
+        name: '',
+        email: '',
+        inc: 0,
+        exp: 0
+      },
+      budgetList: {
+        inc: [],
+        exp: []
+    },
     }
   }
 
+  newUser = (data) => {
+    this.setState(Object.assign(this.state.user, {
+        userid: data.userid,
+        name: data.name,
+        email: data.email,
+        inc: parseInt(data.totalincome, 10),
+        exp: parseInt(data.totalexpense, 10)
 
+    }))
+  }
+
+  incomeArrays = (data) => {
+    this.setState(Object.assign(this.state.budgetList, {
+      inc: data
+    }))
+  }
+
+  expenseArrays = (data) => {
+    this.setState(Object.assign(this.state.budgetList, {
+      exp: data
+    }))
+  }
 
   typeChange = (e) => {
     this.setState({type: e.target.value})
@@ -34,17 +64,18 @@ class App extends Component {
     this.setState({ value: parseFloat(e.target.value) })
   }
 
-  componentDidMount() {
-    fetch('http://localhost:8080/')
-    .then(response => response.json())
-    .then(console.log)
-  }
+  // componentDidMount() {
+  //   fetch('http://localhost:8080/')
+  //   .then(response => response.json())
+  //   .then(console.log)
+  // }
   AddIncItem = () => {
     fetch('http://localhost:8080/incitem', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        id: (this.state.budgetList.inc.length - 1) + 1,
+        userid: this.state.user.userid,
+        incid: (this.state.budgetList.inc.length - 1) + 1,
         type: this.state.type,
         description: this.state.description,
         value: this.state.value
@@ -53,10 +84,10 @@ class App extends Component {
       .then(item => {
         console.log(item);
         this.state.budgetList.inc.push({
-          Id: item.Id, // 6 -1
-          Type: item.Type,
-          Description: item.Description,
-          Value: item.Value
+          id: item.incid, // 6 -1
+          type: item.type,
+          description: item.description,
+          value: item.value
         })
       })
       
@@ -66,7 +97,7 @@ class App extends Component {
    
 
   AddExpItem = () => {
-      let percentage;
+      let percentage = 0;
 
       if (this.state.inc === 0) {
         percentage = 0
@@ -78,7 +109,8 @@ class App extends Component {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        id: (this.state.budgetList.exp.length - 1) + 1,
+        userid: this.state.user.userid,
+        expid: (this.state.budgetList.exp.length - 1) + 1,
         type: this.state.type,
         description: this.state.description,
         value: this.state.value,
@@ -88,11 +120,11 @@ class App extends Component {
       .then(item => {
         console.log(item);
         this.state.budgetList.exp.push({
-          Id: item.Id, // 6 -1
-          Type: item.Type,
-          Description: item.Description,
-          Value: item.Value,
-          Percentage: item.Percentage
+          id: item.expid, 
+          type: item.type,
+          description: item.description,
+          value: item.value,
+          percentage: item.percentage
         })
       })
       this.setState({ type: "inc", description: "", value: "" })
@@ -103,11 +135,14 @@ class App extends Component {
     if (this.state.description !== '' && this.state.value !== '') {
       if (this.state.type === 'inc') {
         this.AddIncItem()
-      } else {
-        this.AddExpItem()
+        this.Inctotals();
+      } else if (this.state.type === 'exp') {
+        this.AddExpItem();
+        this.Exptotals();
       }
-      this.Inctotals();
-      this.Exptotals();
+       
+      
+      
       this.setState({ type: "inc", description: "", value: "" })
     }
   }  
@@ -126,35 +161,32 @@ class App extends Component {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        type: this.state.type,
-        description: this.state.description,
-        value: this.state.value
+        userid: this.state.user.userid
       })
     }).then(response => response.json())
     .then(totals => {
       console.log(totals);
-      this.setState({inc: totals})})
+      this.setState(Object.assign(this.state.user, { inc: totals }))
+    })
   }
   Exptotals = () => {
     fetch('http://localhost:8080/expense', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        type: this.state.type,
-        description: this.state.description,
-        value: this.state.value
+        userid: this.state.user.userid
       })
     }).then(response => response.json())
       .then(totals => {
         console.log(totals);
-        this.setState({ exp: totals })
+        this.setState(Object.assign(this.state.user, { exp: totals }))
       })
   }
 
 
   DelIncItem = (id) => {
     const ids = this.state.budgetList.inc.map((item) => {
-      return (item.Id, item.Value)
+      return (item.id)
     })
     const index = ids.indexOf(id);
     fetch('http://localhost:8080/incdelete', {
@@ -164,7 +196,10 @@ class App extends Component {
         id: index
       })
     }).then(response => response.json())
-      .then(value => this.setState({ inc: value }))
+      .then(value => {
+       let newIncTotal = this.state.inc - value;
+        this.setState({ inc: newIncTotal });
+      })
     this.state.budgetList.inc.splice(index, 1)
     this.Inctotals();
   }
@@ -194,12 +229,28 @@ class App extends Component {
         //   this.Exptotals();
         //}
 
+   onRouteChange = (route) => {
+    this.setState({route: route})
+  }
+
   render() {
     return (
-      <div className="App">
-        <Top totalInc = {this.state.inc} totalExp = {this.state.exp} budget = {this.state.budget} percent = {this.state.percentage} />
-        <Input value = {this.state.value} type = {this.state.type} description = {this.state.description} typeChange = {this.typeChange} desChange = {this.desChange} valChange = {this.valChange} onSubmit = {this.onSubmit} onKeyPress = {() => this.keyPress}/>
-        <Item Income = {this.state.budgetList.inc} Expense = {this.state.budgetList.exp} DelIncItem = { this.DelIncItem} DelExpItem = { this.DelExpItem}/>
+      <div>
+        {this.state.route === 'Home' ?
+          <div className="App">
+            <Top totalInc={this.state.user.inc} totalExp={this.state.user.exp} />
+            <Input value={this.state.value} type={this.state.type} description={this.state.description} typeChange={this.typeChange} desChange={this.desChange} valChange={this.valChange} onSubmit={this.onSubmit} />
+            <Item Income={this.state.budgetList.inc} Expense={this.state.budgetList.exp} DelIncItem={this.DelIncItem} DelExpItem={this.DelExpItem} />
+          </div>
+          : (
+              this.state.route === 'SignIn' ?
+              <Signin onRouteChange={this.onRouteChange} newUser={this.newUser} incomeArrays={this.incomeArrays} expenseArrays={this.expenseArrays}/>
+              : <Register onRouteChange={this.onRouteChange} newUser={this.newUser} incomeArrays={this.incomeArrays}/>
+            )
+
+        }
+
+
       </div>
     );
   }

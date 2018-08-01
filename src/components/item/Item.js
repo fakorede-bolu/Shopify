@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component} from 'react'
 
 
 class Item extends Component {
@@ -7,11 +7,11 @@ class Item extends Component {
        const IncItem = this.props.Income.map((value, index) => {
             return (
                 <div className="income__list" key={index}>
-                    <div className="item clearfix" id="income-0"><div className="item__description">{value.Description}</div>
+                    <div className="item clearfix" id="income-0"><div className="item__description">{value.description}</div>
                         <div className="right clearfix">
-                            <div className="item__value" >+{value.Value}</div>
+                            <div className="item__value" >+{value.value}</div>
                             <div className="item__delete">
-                                <button className="item__delete--btn" onClick={() => this.props.DelIncItem(value.Id)}><i className="ion-ios-close-outline"></i>Del</button>
+                                <button className="item__delete--btn" onClick={() => this.props.DelIncItem(value.id)}><i className="ion-ios-close-outline"></i>Del</button>
                             </div>
                         </div>
                     </div>
@@ -22,12 +22,12 @@ class Item extends Component {
             return (
                 <div className="expenses__list" key={index}>
                     <div className="item clearfix" id="expense-0">
-                        <div className="item__description">{value.Description}</div>
+                        <div className="item__description">{value.description}</div>
                         <div className="right clearfix">
-                            <div className="item__value" >- {value.Value}</div>
-                            <div className="item__percentage">{value.Percentage}%</div>
+                            <div className="item__value" >- {value.value}</div>
+                            <div className="item__percentage">{value.percentage}%</div>
                             <div className="item__delete">
-                                <button className="item__delete--btn" onClick={() => this.props.DelExpItem(value.Id)}><i className="ion-ios-close-outline"></i>del</button>
+                                <button className="item__delete--btn" onClick={() => this.props.DelExpItem(value.id)}><i className="ion-ios-close-outline"></i>del</button>
                             </div>
                         </div>
                     </div>        
