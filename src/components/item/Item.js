@@ -11,7 +11,7 @@ class Item extends Component {
                         <div className="right clearfix">
                             <div className="item__value" >+{value.value}</div>
                             <div className="item__delete">
-                                <button className="item__delete--btn" onClick={() => this.props.DelIncItem(value.id)}><i className="ion-ios-close-outline"></i>Del</button>
+                                <button className="item__delete--btn" onClick={() => this.props.DelIncItem(value.incid)}><i className="ion-ios-close-outline"></i>Del</button>
                             </div>
                         </div>
                     </div>
@@ -27,7 +27,7 @@ class Item extends Component {
                             <div className="item__value" >- {value.value}</div>
                             <div className="item__percentage">{value.percentage}%</div>
                             <div className="item__delete">
-                                <button className="item__delete--btn" onClick={() => this.props.DelExpItem(value.id)}><i className="ion-ios-close-outline"></i>del</button>
+                                <button className="item__delete--btn" onClick={() => this.props.DelExpItem(value.expid)}><i className="ion-ios-close-outline"></i>del</button>
                             </div>
                         </div>
                     </div>        

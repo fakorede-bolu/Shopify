@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import bolu from "./bolu.jpeg";
-import './signin.css';
+import './Signin.css';
 
 
 export default class Signin extends Component {
@@ -13,7 +13,6 @@ export default class Signin extends Component {
 
     }
 
-    // EVENT LISTNERS FOR EMAIL AND PASSWORD
 
     onEmailChange = (event) => {
         this.setState({ signInEmail: event.target.value })
@@ -24,7 +23,7 @@ export default class Signin extends Component {
     }
 
     onSubmitSignIn = () => {
-        // run a fetch to connect with the backend and normally, fetch does a get request by default but we want to do a post request, hence, we can pass a second parameter which is the object to fetch just to specify the kind of request we are making 
+       
         fetch('http://localhost:8080/signin', {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
@@ -39,8 +38,8 @@ export default class Signin extends Component {
                 if (user.userid) {
                     this.props.newUser(user);
                     this.props.onRouteChange('Home');
-                    fetch('http://localhost:8080/incomearrays', { //on the back end, both my income and expense will
-                        method: 'post',                        // be one url of items
+                    fetch('http://localhost:8080/incomearrays', { 
+                        method: 'post',                        
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             userid: user.userid
@@ -49,8 +48,8 @@ export default class Signin extends Component {
                         .then(incomearrays => {
                             this.props.incomeArrays(incomearrays)
                         })
-                    fetch('http://localhost:8080/expensearrays', { //on the back end, both my income and expense will
-                        method: 'post',                        // be one url of items
+                    fetch('http://localhost:8080/expensearrays', { 
+                        method: 'post',                      
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             userid: user.userid

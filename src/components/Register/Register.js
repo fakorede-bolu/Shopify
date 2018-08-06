@@ -39,16 +39,6 @@ export default class Register extends Component {
                     if (user.userid) {
                         this.props.newUser(user)
                         this.props.onRouteChange('Home')
-                        fetch('http://localhost:8080/incomearrays', { //on the back end, both my income and expense will
-                            method: 'post',                        // be one url of items
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                userid: user.userid
-                            })
-                        }).then(response => response.json())
-                            .then(incomearrays => {
-                                this.props.incomeArrays(incomearrays)
-                            })
                     }
                 })
         }
