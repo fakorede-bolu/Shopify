@@ -2,9 +2,13 @@ import React from "react";
 
 const Top = ({totalInc, totalExp}) => {
        
-        let budget = `0.00`;
-        if (totalInc > totalExp) {
+        let budget;
+        if (totalInc !== 0 && totalInc > totalExp) {
             budget = `+${totalInc - (totalExp)}`
+        } else if (totalInc < totalExp) {
+            budget = `${totalInc - (totalExp)}`
+        } else if (totalExp === 0 && totalInc === 0) {
+            budget = `0.00`
         } else if (totalExp > totalInc) {
             budget = `-${totalExp}`
         }
