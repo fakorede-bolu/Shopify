@@ -32,19 +32,21 @@ body {
 **********************************************/
 
 .top {
-    height: 40vh;
+    height: 45vh;
     background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url(back.png);
     background-size: cover;
     background-position: center;
     position: relative;
 }
 
+
+
 .budget {
     position: absolute;
     width: 350px;
-    top: 50%;
+    top: 80%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -80%);
     color: #fff;
 }
 
@@ -185,11 +187,11 @@ body {
 .income {
     float: left;
     width: 475px;
-    margin-right: 50px;
+    /* margin-right: 50px; */
 }
 
 .expenses {
-    float: left;
+    float: right;
     width: 475px;
 }
 

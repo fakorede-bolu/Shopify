@@ -22,6 +22,10 @@ export default class Signin extends Component {
         this.setState({ signInPassword: event.target.value })
     }
 
+    saveAuthTokenSession = (token) => {
+        window.sessionStorage.setItem('token', token);
+    }
+
     onSubmitSignIn = () => {
        
         fetch('http://localhost:8080/signin', {
@@ -35,30 +39,46 @@ export default class Signin extends Component {
             .then(response => response.json())
             .then(user => {
                 console.log(user);
-                if (user.userid) {
-                    this.props.newUser(user);
-                    this.props.onRouteChange('Home');
-                    fetch('http://localhost:8080/incomearrays', { 
-                        method: 'post',                        
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            userid: user.userid
+                if (user.userId && user.success === 'true') {
+                    console.log(user.token);
+                    this.saveAuthTokenSession(user.token)
+                        fetch(`http://localhost:8080/profile/${user.userId}`, {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': user.token
+                            }
                         })
-                    }).then(response => response.json())
-                        .then(incomearrays => {
-                            this.props.incomeArrays(incomearrays)
-                        })
-                    fetch('http://localhost:8080/expensearrays', { 
-                        method: 'post',                      
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            userid: user.userid
-                        })
-                    }).then(response => response.json())
-                        .then(expensearrays => {
-                            this.props.expenseArrays(expensearrays)
-                        })
-                }
+                            .then(response => response.json())
+                            .then(user => {
+                                if (user && user.email) {
+                                    this.props.newUser(user)
+                                    this.props.onRouteChange('Home');
+                                    fetch('http://localhost:8080/incomearrays', {
+                                        method: 'post',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            userid: user.userid
+                                        })
+                                    }).then(response => response.json())
+                                        .then(incomearrays => {
+                                            this.props.incomeArrays(incomearrays)
+                                        })
+                                    fetch('http://localhost:8080/expensearrays', {
+                                        method: 'post',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            userid: user.userid
+                                        })
+                                    }).then(response => response.json())
+                                        .then(expensearrays => {
+                                            this.props.expenseArrays(expensearrays)
+                                        })
+                                }
+                            })
+                
+                    
+                } //final for if statemnt 
             })
 
     }

@@ -1,6 +1,7 @@
 import React from "react";
+import Navigation from "../Navigation/Navigation"
 
-const Top = ({totalInc, totalExp}) => {
+const Top = ({totalInc, totalExp, onRouteChange, name, isSignedIn, toggleModal}) => {
        
         let budget;
         if (totalInc !== 0 && totalInc > totalExp) {
@@ -47,6 +48,9 @@ const Top = ({totalInc, totalExp}) => {
         return (
             <div>
                 <div className="top">
+                    <div className="top-nav">
+                        <Navigation onRouteChange={onRouteChange} name={name} isSignedIn={isSignedIn} toggleModal={toggleModal}/>
+                    </div>
                     <div className="budget">
                         <div className="budget__title">
                             Available Budget in <span className="budget__title--month">{month}, {year}</span>:

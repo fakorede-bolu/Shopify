@@ -1,0 +1,164 @@
+.profile-modal {
+    background-color: rgba(255, 255, 255, 0.8);
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    
+   
+}
+
+.profile-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1200px;
+    height: 90%;
+    background: white;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    transition: .5s;
+  
+}
+
+.user-head {
+    margin-left: 4rem;
+    display: flex
+}
+
+.user-name {
+    padding-top: 2rem;
+    padding-left: 2rem
+}
+
+.user-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: block;
+ 
+    
+}
+
+.user-header {
+    margin: 0;
+    padding: 0 0 20px;
+    color: #262626;
+    text-align: center;
+}
+
+.balance {
+    margin: 0 auto;
+    padding: 0 0 20px;
+    color: #262626;
+    text-align: center;
+    background: rgb(23, 182, 245);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    width: 400px;
+    text-transform: uppercase;
+    color: rgb(53, 47, 47);
+    padding-top: 2rem;
+    
+}
+
+.balance-text {
+    font-size: 16px;
+    color: #ffffff
+}
+
+.cancel  {
+    float: right;
+    cursor: pointer
+}
+
+.form {
+    position: absolute;
+    top: 95%;
+    left: 50%;
+    transform: translate(-50%, -95%);
+    width: 600px;
+    background: transparent;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    transition: .5s;
+    z-index: -1000
+}
+
+
+
+.profile-modal input {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.profile-modal input[type="text"],
+.profile-modal input[type="password"],
+ .profile-modal input[type="email"]{
+    border: none;
+    border-bottom: 1px solid #8d8c8c;
+    outline: none;
+    height: 40px;
+    color: #555555;
+    background: transparent;
+    font-size: 16px;
+    padding-left: 20px;
+    letter-spacing: 1px
+}
+
+
+
+::placeholder {
+    color: rgba(0, 0, 0, .5);
+}
+
+.btn {
+    display: flex;
+    justify-content: space-between
+}
+
+.Update {
+    margin-top: 20px; 
+    border:none;
+    outline: none;
+    height: 40px;
+    font-size: 16px;
+    background: #57b846;
+    border-radius: 25px;
+    color: #fff;
+    cursor: pointer;
+    width: 200px;
+    margin-left: 2rem;
+    margin-right: 3rem
+}
+
+.Skip {
+     margin-top: 20px; 
+    border:none;
+    outline: none;
+    height: 40px;
+    font-size: 16px;
+    background: #e61e1e;
+    border-radius: 25px;
+    color: #fff;
+    cursor: pointer;
+    width: 200px;
+   
+}
+
+.footer-qed {
+    font-size: 16px
+}
+
+.Register {
+    text-align: center;
+    color: #57b846;
+    cursor: pointer;
+    display: block;
+    outline: none;
+    width: 150px;
+    border: none;
+}

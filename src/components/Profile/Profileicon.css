@@ -1,0 +1,26 @@
+.avatar {
+    padding: 2rem;
+    padding-bottom: 0.3rem;
+    display: flex
+}
+
+.avatar-img {
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 100%;
+    /* display: inline-block; */
+    height: 3rem;
+    width: 3rem;
+    cursor: pointer
+}
+
+.avatar-name {
+    color: rgb(255, 255, 255);
+    padding-top: 0.7rem;
+    padding-left: 1rem
+}
+
+.avatar-dropdown {
+    cursor: pointer;
+    background-color: rgb(255, 255, 255);
+}
