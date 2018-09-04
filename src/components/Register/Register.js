@@ -8,7 +8,8 @@ export default class Register extends Component {
         this.state = {
             email: '',
             password: '',
-            name: ''
+            name: '',
+            error: false
         }
     }
 
@@ -24,6 +25,10 @@ export default class Register extends Component {
         this.setState({ name: event.target.value })
     }
 
+    saveAuthTokenSession = (token) => {
+        window.sessionStorage.setItem('token', token);
+    }
+
     onSubmitButton = () => {
         if (this.state.email !== '' && this.state.name !== '' && this.state.password !== '') {
             fetch('http://localhost:8080/register', {
@@ -36,9 +41,13 @@ export default class Register extends Component {
                 })
             }).then(response => response.json())
                 .then(user => {
-                    if (user.userid) {
-                        this.props.newUser(user)
-                        this.props.onRouteChange('Home')
+                    if (user.userId && user.success === 'true') {
+                        this.saveAuthTokenSession(user.token)
+                        console.log(user.token);
+                        this.props.onRouteChange('Home');
+                        this.props.getUser(user.token, user.userId)
+                    } else {
+                        this.setState({ error: true })
                     }
                 })
         }
@@ -46,7 +55,8 @@ export default class Register extends Component {
     }
     render() {
         return (
-            <div className="loginBox">
+            this.state.error === false ?
+            (<div className="loginBox">
                 <div className="glass">
                     <img src={bolu} alt="user" className="user"/>
                     <h3 className="user-header">Register</h3>
@@ -67,7 +77,29 @@ export default class Register extends Component {
                         <button type="submit" value="Login" onClick={() => { this.props.onRouteChange('SignIn')}} className="signin"> Login </button>
                     </div>
                 </div>
-            </div>
+            </div>)
+                : (<div className="loginBox">
+                    <div className="glass">
+                        <img src={bolu} alt="user" className="user" />
+                        <h3 className="user-header" style={{'color': 'orangeRed', 'fontSize': '24px'}}>User might already exist</h3>
+                        <div>
+                            <div className="inputBox">
+                                <input type="text" name="" placeholder="Name" onChange={this.onNameRegister} style={{ 'borderBottom': '1px solid orangeRed'}}/>
+                            </div>
+                            <div className="inputBox">
+                                <input type="email" name="" placeholder="Email" onChange={this.onEmailRegister} style={{ 'borderBottom': '1px solid orangeRed'}}/>
+                            </div>
+                            <div className="inputBox">
+                                        <input type="password" name="" placeholder="Password" onChange={this.onPasswordRegister} style={{ 'borderBottom': '1px solid orangeRed' }}/>
+                            </div>
+                            <input type="submit" value="Register" onClick={this.onSubmitButton} />
+                        </div>
+                        <div className="footer">
+                            <span className="footer-qed">Already have an account?</span>
+                            <button type="submit" value="Login" onClick={() => { this.props.onRouteChange('SignIn') }} className="signin"> Login </button>
+                        </div>
+                    </div>
+                </div>)
         )
     }
 }

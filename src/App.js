@@ -36,6 +36,11 @@ class App extends Component {
     this.state = initialState
   }
 
+
+
+
+
+
   componentDidMount() {
     const token = window.sessionStorage.getItem('token');
     if (token) {
@@ -49,47 +54,55 @@ class App extends Component {
       .then(response => response.json())
       .then(data => {
         if (data && data.userid) {
-          fetch(`http://localhost:8080/profile/${data.userid}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token
-            }
-          })
-          .then(response => response.json())
-          .then(user => {
-            if (user && user.email) {
-              this.newUser(user)
-              this.onRouteChange('Home');
-              fetch('http://localhost:8080/incomearrays', { 
-                  method: 'post',                        
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                      userid: this.state.user.userid
-                  })
-              }).then(response => response.json())
-                  .then(incomearrays => {
-                      this.incomeArrays(incomearrays)
-                  })
-              fetch('http://localhost:8080/expensearrays', { 
-                  method: 'post',                      
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    userid: this.state.user.userid
-                  })
-              }).then(response => response.json())
-                  .then(expensearrays => {
-                      this.expenseArrays(expensearrays)
-                  })
-            }
-          })
+          this.getUser(token, data.userid)
         }
       })
       .catch(console.log)
     }
   }
 
-  newUser = (data) => {
+
+  getUser = (token, userid) => {
+
+    fetch(`http://localhost:8080/profile/${userid}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token
+      }
+    })
+      .then(response => response.json())
+      .then(user => {
+        if (user && user.email) {
+          this.loadUser(user)
+          this.onRouteChange('Home');
+          fetch('http://localhost:8080/incomearrays', {
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userid: this.state.user.userid
+            })
+          })
+            .then(response => response.json())
+            .then(incomearrays => {
+              this.incomeArrays(incomearrays)
+            })
+          fetch('http://localhost:8080/expensearrays', {
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userid: this.state.user.userid
+            })
+          })
+            .then(response => response.json())
+            .then(expensearrays => {
+              this.expenseArrays(expensearrays)
+            })
+        }
+      })
+  }
+
+  loadUser = (data) => {
     this.setState(Object.assign(this.state.user, {
         userid: data.userid,
         name: data.name,
@@ -135,9 +148,9 @@ class App extends Component {
         description: this.state.description,
         value: this.state.value
       })
-    }).then(response => response.json())
+    })
+    .then(response => response.json())
       .then(item => {
-        console.log(item);
         this.state.budgetList.inc.push({
           userid: item.userid,
           id: item.incid, // 6 -1
@@ -147,7 +160,15 @@ class App extends Component {
         })
         this.Inctotals() 
       })
-      
+
+    // this.state.budgetList.inc.push({
+    //       userid: this.state.user.userid,
+    //       id: (this.state.budgetList.inc.length - 1) + 1,
+    //       type: this.state.type,
+    //       description: this.state.description,
+    //       value: this.state.value
+    //     })
+  
       console.log(this.state.budgetList.inc);
   }
    
@@ -205,6 +226,7 @@ class App extends Component {
   }  
 
   Inctotals = () => {
+    // get the totalincome from the user
     fetch('http://localhost:8080/income', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
@@ -214,6 +236,7 @@ class App extends Component {
     }).then(response => response.json())
     .then(totals => {
       console.log(totals);
+      // assign the totals to the totalincome in the state
       this.setState(Object.assign(this.state.user, { totalincome: totals }))
       fetch('http://localhost:8080/incomearrays', {
         method: 'post',
@@ -221,8 +244,10 @@ class App extends Component {
         body: JSON.stringify({
           userid: this.state.user.userid
         })
-      }).then(response => response.json())
-        .then(incomearrays => {
+      })
+      // update the income array to update the UI
+      .then(response => response.json())
+      .then(incomearrays => {
           this.incomeArrays(incomearrays)
         })
     })
@@ -256,9 +281,7 @@ class App extends Component {
     const ids = this.state.budgetList.inc.map((item) => {
       return (item.incid)
     })
-    console.log(id);
     const index = ids.indexOf(id);
-    console.log(index);
     fetch('http://localhost:8080/incdelete', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
@@ -301,6 +324,7 @@ class App extends Component {
 
    onRouteChange = (route) => {
      if (route === 'SignOut') {
+       window.sessionStorage.removeItem('token');
        return this.setState(initialState)
      } else if (route === "Home") {
        this.setState({isSignedIn: true})
@@ -315,24 +339,25 @@ class App extends Component {
   }
 
   render() {
+    const {route, isProfileOpen, value, user, description, budgetList, type, isSignedIn } = this.state;
     return (
       <div>
-        {this.state.route === 'Home' ?
+        {route === 'Home' ?
           <div className="App">
-            { this.state.isProfileOpen &&
+            { isProfileOpen &&
               <Modal> 
-                <Profile isProfileOpen={this.state.isProfileOpen} toggleModal = {this.toggleModal} user = {this.state.user}
-                newUser = {this.newUser}/>  
+                <Profile isProfileOpen={ isProfileOpen } toggleModal = { this.toggleModal } user = { user }
+                newUser = { this.newUser }/>  
               </Modal>
             }
-            <Top totalInc={this.state.user.totalincome} totalExp={this.state.user.totalexpense} onRouteChange={this.onRouteChange} name  = {this.state.user.name} isSignedIn = {this.state.isSignedIn} toggleModal={this.toggleModal}/>
-            <Input value={this.state.value} type={this.state.type} description={this.state.description} typeChange={this.typeChange} desChange={this.desChange} valChange={this.valChange} onSubmit={this.onSubmit} />
-            <Item Income={this.state.budgetList.inc} Expense={this.state.budgetList.exp} DelIncItem={this.DelIncItem} DelExpItem={this.DelExpItem} />
+            <Top totalInc={ user.totalincome } totalExp={ user.totalexpense } onRouteChange={this.onRouteChange} name  = {this.state.user.name} isSignedIn = { isSignedIn } toggleModal={this.toggleModal}/>
+            <Input value={ value } type={ type } description={ description } typeChange={this.typeChange} desChange={this.desChange} valChange={this.valChange} onSubmit={this.onSubmit} />
+            <Item Income={ budgetList.inc } Expense={ budgetList.exp } DelIncItem={this.DelIncItem} DelExpItem={this.DelExpItem} />
           </div>
           : (
               this.state.route === 'SignIn' ?
-              <Signin onRouteChange={this.onRouteChange} newUser={this.newUser} incomeArrays={this.incomeArrays} expenseArrays={this.expenseArrays}/>
-              : <Register onRouteChange={this.onRouteChange} newUser={this.newUser} incomeArrays={this.incomeArrays}/>
+              <Signin onRouteChange={this.onRouteChange} newUser={this.newUser} getUser = { this.getUser }/>
+              : <Register onRouteChange={this.onRouteChange} newUser={this.newUser} incomeArrays={this.incomeArrays} getUser={this.getUser}/>
             )
         }
       </div>

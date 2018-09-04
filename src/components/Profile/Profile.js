@@ -47,7 +47,7 @@ class Profile extends React.Component {
           </div>
           <div className="balance">
             <h3 className="balance-text">Your available balance is:</h3>
-            <h4 className="balance-price"> {user.totalincome} </h4>
+            <h4 className="balance-price"> {user.totalincome - user.totalexpense} </h4>
           </div>
           <div className="form">
             <div className="glass">

@@ -8,7 +8,8 @@ export default class Signin extends Component {
         super();
         this.state = {
             signInEmail: '',
-            signInPassword: ''
+            signInPassword: '',
+            error : false
         }
 
     }
@@ -40,51 +41,38 @@ export default class Signin extends Component {
             .then(user => {
                 console.log(user);
                 if (user.userId && user.success === 'true') {
-                    console.log(user.token);
                     this.saveAuthTokenSession(user.token)
-                        fetch(`http://localhost:8080/profile/${user.userId}`, {
-                            method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': user.token
-                            }
-                        })
-                            .then(response => response.json())
-                            .then(user => {
-                                if (user && user.email) {
-                                    this.props.newUser(user)
-                                    this.props.onRouteChange('Home');
-                                    fetch('http://localhost:8080/incomearrays', {
-                                        method: 'post',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({
-                                            userid: user.userid
-                                        })
-                                    }).then(response => response.json())
-                                        .then(incomearrays => {
-                                            this.props.incomeArrays(incomearrays)
-                                        })
-                                    fetch('http://localhost:8080/expensearrays', {
-                                        method: 'post',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({
-                                            userid: user.userid
-                                        })
-                                    }).then(response => response.json())
-                                        .then(expensearrays => {
-                                            this.props.expenseArrays(expensearrays)
-                                        })
-                                }
-                            })
-                
-                    
-                } //final for if statemnt 
+                    this.props.onRouteChange('Home');
+                    this.props.getUser(user.token, user.userId)         
+                } else {
+                    this.setState({ error: true })
+                }
             })
 
     }
     render() {
         return (
-            <div className="loginBox">
+            this.state.error === true ?
+                (<div className="loginBox">
+                    <div className="glass">
+                        <img src={bolu} alt="user" className="user" />
+                        <h3 className="user-header " style={{'color': 'orangeRed', 'fontSize': '24px'}}>Wrong Credentials!</h3>
+                        <div>
+                            <div className="inputBox">
+                                <input type="email" name="" placeholder="Email" onChange={this.onEmailChange} style={{ 'borderBottom': '1px solid orangeRed'}}/>
+                            </div>
+                            <div className="inputBox">
+                                <input type="password" name="" placeholder="Password" onChange={this.onPasswordChange} style={{ 'borderBottom': '1px solid orangeRed' }}/>
+                            </div>
+                            <input type="submit" value="Signin" onClick={this.onSubmitSignIn} />
+                        </div>
+                        <div className="footer">
+                            <span className="footer-qed">Do not have an account?</span>
+                            <button type="submit" value="Login" onClick={() => { this.props.onRouteChange('Register') }} className="Register"> Register here! </button>
+                        </div>
+                    </div>
+                </div>)
+           : (<div className="loginBox">
                 <div className="glass">
                     <img src={bolu} alt="user" className="user" />
                     <h3 className="user-header">Welcome back!</h3>
@@ -102,7 +90,7 @@ export default class Signin extends Component {
                         <button type="submit" value="Login" onClick={() => { this.props.onRouteChange('Register') }} className="Register"> Register here! </button>
                     </div>
                 </div>
-            </div>
+            </div>)
         )
     }
 }
